@@ -33,7 +33,7 @@ class DefinedGoalPublisher(Node):
         self.turn_angle = math.pi / 2
 
         #subscribe to topic '/odom' to get the current positional data of the turtle
-        self.subscription = self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
+        self.subscription = self.create_subscription(Odometry, '/AMR4/odom', self.odom_callback, 10)
 
         #publish to topic 'turtle1/cmd_vel' a message of data type Twist
         self.cmd_vel_publisher = self.create_publisher(Twist, '/cmd_vel', 10)
