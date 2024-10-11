@@ -64,20 +64,29 @@ class DefinedGoalPublisher(Node):
             self.turn_turtle()
 
         elif self.state == self.GOAL_REACHED:
-            self.stop_turtle
+            self.stop_turtle()
 
     
     def move_forward(self):
         """Move turtle forward by distance self.move_distance (in meters)."""
+
+        if self.current_position is None or self.start_position is None:
+            self.get_logger().warn('Waiting for odometry data...')
+            return
+
+        elif self.current_orientation is None or self.start_orientation is None:
+            self.get_logger().warn('Waiting for odometry data...')
+            return
+        
         self.velocity_message = Twist()
         distance_moved = math.sqrt( (self.current_position.x - self.start_position.x)**2 + (self.current_position.y - self.start_position.y)**2)
         distance_from_initial = math.sqrt( (self.current_position.x - self.initial_position.x)**2 + (self.current_position.y - self.initial_position.y)**2)
         
         if distance_moved < self.move_distance:
-            self.velocity_message.linear.x = 0.2
+            self.velocity_message.linear.x = 0.15
             self.velocity_message.angular.z = 0.0
 
-        elif distance_from_initial == math.sqrt(8): #define the stop condition as once the distance equals hypotenuse of triangle with sides 2m
+        elif distance_from_initial >= 0.95*math.sqrt(8): #define the stop condition as once the distance equals hypotenuse of triangle with sides 2m
             self.state = self.GOAL_REACHED
             self.velocity_message.linear.x = 0.0
 
@@ -92,6 +101,14 @@ class DefinedGoalPublisher(Node):
 
     def turn_turtle(self):
         """Turn the turtle 90 degrees"""
+        if self.current_position is None or self.start_position is None:
+            self.get_logger().warn('Waiting for odometry data...')
+            return
+            
+        elif self.current_orientation is None or self.start_orientation is None:
+            self.get_logger().warn('Waiting for odometry data...')
+            return
+        
         angle_turned = abs(self.current_orientation - self.start_orientation)
 
         if angle_turned < self.turn_angle:

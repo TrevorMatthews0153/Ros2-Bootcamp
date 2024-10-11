@@ -41,7 +41,7 @@ class SpiralPublisher(Node):
         #Check to see if the current position of the turtle is within the boundaries of the field. 
         #If so, have the turtle move in a spiral pattern with specified velocities
         #If not, stop the turtle
-        if abs(self.current_position['x']) > 10.5 or abs(self.current_position['y']) > 10.5:
+        if abs(self.current_position['x']) > 4 or abs(self.current_position['y']) > 4:
             # self.get_logger().info('Limit reached! Stopping the turtle.')
 
             velocity_msg = Twist()

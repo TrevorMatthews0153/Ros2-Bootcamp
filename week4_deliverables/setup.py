@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-        'definedgoal_pub = week4_deliverables.week4_square_publisher:main'
+        'definedgoal_pub = week4_deliverables.week4_square_publisher:main',
+        'spiral_pub = week4_deliverables.week4_spiral_publisher:main'
         ],
     },
 )
