@@ -26,6 +26,9 @@ class DefinedGoalPublisher(Node):
         self.current_position = None
         self.current_orientation = 0.0
 
+        self.start_position = None
+        self.start_orientation = 0.0
+
         self.move_distance = 2.0
         self.turn_angle = math.pi / 2
 
@@ -51,7 +54,7 @@ class DefinedGoalPublisher(Node):
             self.initial_orientation = self.current_orientation
             self.get_logger().info(f"Initial Position: {self.initial_position}, Orientation:{self.current_position}")
 
-        if self.start_position = None:
+        if self.start_position == None:
             self.start_position = self.current_position
             self.start_orientation = self.current_orientation
 
@@ -59,9 +62,9 @@ class DefinedGoalPublisher(Node):
     def update_state(self):
         """Timer callback to update turtle's movement based on its state"""
         if self.current_position is None or self.start_position is None:
-            self.get_logger().warn('Waiting for odometry data...')
+            self.get_logger().warn('Odometry data not yet recieved, waiting...')
             return
-            
+
         if self.state == self.MOVING:
             self.move_forward()
 
@@ -76,18 +79,25 @@ class DefinedGoalPublisher(Node):
         """Move turtle forward by distance self.move_distance (in meters)."""
 
         if self.current_position is None or self.start_position is None:
-            self.get_logger().warn('Waiting for odometry data...')
+            self.get_logger().warn('Waiting for odometry data in move_forward()...')
             return
         
         self.velocity_message = Twist()
-        distance_moved = math.sqrt( (self.current_position.x - self.start_position.x)**2 + (self.current_position.y - self.start_position.y)**2)
-        distance_from_initial = math.sqrt( (self.current_position.x - self.initial_position.x)**2 + (self.current_position.y - self.initial_position.y)**2)
+
+        try:
+            self.distance_moved = math.sqrt( (self.current_position.x - self.start_position.x)**2 + (self.current_position.y - self.start_position.y)**2)
+            self.distance_from_initial = math.sqrt( (self.current_position.x - self.initial_position.x)**2 + (self.current_position.y - self.initial_position.y)**2)
+        except AttributeError as e:
+            self.get_logger().error(f'Error calculating distance: {e}')
+            return
         
-        if distance_moved < self.move_distance:
+        self.get_logger().info(f'Distance moved from Start: {self.distance_moved},Distance from Initial Position: {self.distance_from_initial}')
+
+        if self.distance_moved < self.move_distance:
             self.velocity_message.linear.x = 0.15
             self.velocity_message.angular.z = 0.0
 
-        elif distance_from_initial >= 0.95*math.sqrt(8): #define the stop condition as once the distance equals hypotenuse of triangle with sides 2m
+        elif self.distance_from_initial >= 0.95*math.sqrt(8): #define the stop condition as once the distance equals hypotenuse of triangle with sides 2m
             self.state = self.GOAL_REACHED
             self.velocity_message.linear.x = 0.0
 
@@ -103,7 +113,7 @@ class DefinedGoalPublisher(Node):
     def turn_turtle(self):
         """Turn the turtle 90 degrees"""
         if self.current_position is None or self.start_position is None:
-            self.get_logger().warn('Waiting for odometry data...')
+            self.get_logger().warn('Waiting for odometry data in turn_turtle()...')
             return
         
         angle_turned = abs(self.current_orientation - self.start_orientation)
