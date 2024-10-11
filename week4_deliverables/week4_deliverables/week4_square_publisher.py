@@ -51,12 +51,17 @@ class DefinedGoalPublisher(Node):
             self.initial_orientation = self.current_orientation
             self.get_logger().info(f"Initial Position: {self.initial_position}, Orientation:{self.current_position}")
 
+        if self.start_position = None:
             self.start_position = self.current_position
             self.start_orientation = self.current_orientation
 
     
     def update_state(self):
         """Timer callback to update turtle's movement based on its state"""
+        if self.current_position is None or self.start_position is None:
+            self.get_logger().warn('Waiting for odometry data...')
+            return
+            
         if self.state == self.MOVING:
             self.move_forward()
 
@@ -71,10 +76,6 @@ class DefinedGoalPublisher(Node):
         """Move turtle forward by distance self.move_distance (in meters)."""
 
         if self.current_position is None or self.start_position is None:
-            self.get_logger().warn('Waiting for odometry data...')
-            return
-
-        elif self.current_orientation is None or self.start_orientation is None:
             self.get_logger().warn('Waiting for odometry data...')
             return
         
@@ -102,10 +103,6 @@ class DefinedGoalPublisher(Node):
     def turn_turtle(self):
         """Turn the turtle 90 degrees"""
         if self.current_position is None or self.start_position is None:
-            self.get_logger().warn('Waiting for odometry data...')
-            return
-            
-        elif self.current_orientation is None or self.start_orientation is None:
             self.get_logger().warn('Waiting for odometry data...')
             return
         
