@@ -94,7 +94,7 @@ class DefinedGoalPublisher(Node):
         
 
         if self.distance_moved < self.move_distance:
-            self.velocity_message.linear.x = 0.2
+            self.velocity_message.linear.x = 0.10
             self.velocity_message.angular.z = 0.0
 
         elif self.distance_from_initial >= 0.95*math.sqrt(8): #define the stop condition as once the distance equals hypotenuse of triangle with sides 2m
