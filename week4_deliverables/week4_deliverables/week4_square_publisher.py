@@ -34,6 +34,7 @@ class DefinedGoalPublisher(Node):
 
         #subscribe to topic '/odom' to get the current positional data of the turtle
         self.subscription = self.create_subscription(Odometry, '/AMR4/odom', self.odom_callback, 10)
+        # self.subscription = self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
 
         #publish to topic 'turtle1/cmd_vel' a message of data type Twist
         self.cmd_vel_publisher = self.create_publisher(Twist, '/cmd_vel', 10)
@@ -91,10 +92,9 @@ class DefinedGoalPublisher(Node):
             self.get_logger().error(f'Error calculating distance: {e}')
             return
         
-        self.get_logger().info(f'Distance moved from Start: {self.distance_moved},Distance from Initial Position: {self.distance_from_initial}')
 
         if self.distance_moved < self.move_distance:
-            self.velocity_message.linear.x = 0.15
+            self.velocity_message.linear.x = 0.2
             self.velocity_message.angular.z = 0.0
 
         elif self.distance_from_initial >= 0.95*math.sqrt(8): #define the stop condition as once the distance equals hypotenuse of triangle with sides 2m
@@ -108,7 +108,9 @@ class DefinedGoalPublisher(Node):
             self.start_orientation = self.current_orientation
 
         #Publish velocity command to move turtle
+        self.get_logger().info(f"Current State: {self.state}")
         self.cmd_vel_publisher.publish(self.velocity_message)
+        self.get_logger().info(f"Publishing velocity: linear.x={self.velocity_message.linear.x}, angular.z={self.velocity_message.angular.z}")
 
     def turn_turtle(self):
         """Turn the turtle 90 degrees"""
@@ -127,7 +129,9 @@ class DefinedGoalPublisher(Node):
             self.start_position = self.current_position
 
         #Publish velocity command to move turtle
+        self.get_logger().info(f"Current State: {self.state}")
         self.cmd_vel_publisher.publish(self.velocity_message)
+        self.get_logger().info(f"Publishing velocity: linear.x={self.velocity_message.linear.x}, angular.z={self.velocity_message.angular.z}")
 
     def stop_turtle(self):
         "Stop the turtle once goal is reached"
@@ -138,6 +142,7 @@ class DefinedGoalPublisher(Node):
         self.velocity_message.angular.z = 0.0
 
         self.cmd_vel_publisher.publish(self.velocity_message)
+        self.get_logger().info(f"Publishing velocity: linear.x={self.velocity_message.linear.x}, angular.z={self.velocity_message.angular.z}")
 
 
 def main(args=None):
