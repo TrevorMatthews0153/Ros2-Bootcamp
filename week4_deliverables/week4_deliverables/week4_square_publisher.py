@@ -48,6 +48,11 @@ class DefinedGoalPublisher(Node):
         orientation_q = msg.pose.pose.orientation
         orientation_list = [orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w]
         (roll, pitch, yaw) = euler_from_quaternion(orientation_list)
+
+        if yaw > math.pi:
+            yaw -= 2*math.pi
+        elif yaw < -math.pi:
+            yaw += 2*math.pi
         self.current_orientation = yaw
 
         if self.initial_position == None:
