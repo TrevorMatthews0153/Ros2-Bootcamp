@@ -43,7 +43,7 @@ class DefinedGoalPublisher(Node):
         self.cmd_vel_publisher = self.create_publisher(Twist, '/cmd_vel', 10)
 
         #timer to update turtle's state and movement
-        self.timer = self.create_timer(0.1, self.update_state)
+        self.timer = self.create_timer(0.05, self.update_state)
 
     def normalize_angle(self,angle):
         while angle > math.pi:
@@ -122,9 +122,9 @@ class DefinedGoalPublisher(Node):
         self.cmd_vel_publisher.publish(self.velocity_message)
 
         #Pulbish turtle data
-        # self.get_logger().info(f"Current State: {self.state}")
+        self.get_logger().info(f"Current State: {self.state}")
         # self.get_logger().info(f"Publishing velocity: linear.x={self.velocity_message.linear.x}, angular.z={self.velocity_message.angular.z}")
-        # self.get_logger().info(f"Current Position: X:{self.current_position.x},Y:{self.current_position.y}")
+        self.get_logger().info(f"Current Position: X:{self.current_position.x},Y:{self.current_position.y},Theta:{self.current_orientation}")
 
     def turn_turtle(self):
         """Turn the turtle 90 degrees"""
@@ -133,9 +133,9 @@ class DefinedGoalPublisher(Node):
             return
 
         angle_turned = abs(self.normalize_angle(self.current_orientation - self.start_orientation))
-
+        self.get_logger().info(f"Rotation remaining: {self.turn_angle - angle_turned}")
         if self.counterclockwise: #if the turtle needs to move counterclockwise to maintain zigzag
-            self.get_logger().info(f"Angle Turned: {angle_turned} , Turn Angle: {self.turn_angle}")
+            # self.get_logger().info(f"Angle Turned: {angle_turned} , Turn Angle: {self.turn_angle}")
             if angle_turned < abs(self.turn_angle - self.turn_tolerance):
                 self.velocity_message.linear.x = 0.15
                 self.velocity_message.angular.z = 0.5
@@ -165,8 +165,8 @@ class DefinedGoalPublisher(Node):
 
         #Pulbish turtle data
         self.get_logger().info(f"Current State: {self.state}")
-        self.get_logger().info(f"Publishing velocity: linear.x={self.velocity_message.linear.x}, angular.z={self.velocity_message.angular.z}")
-        self.get_logger().info(f"Current Position: X:{self.current_position.x},Y:{self.current_position.y}")
+        # self.get_logger().info(f"Publishing velocity: linear.x={self.velocity_message.linear.x}, angular.z={self.velocity_message.angular.z}")
+        self.get_logger().info(f"Current Position: X:{self.current_position.x},Y:{self.current_position.y},Theta:{self.current_orientation}")
 
     def stop_turtle(self):
         "Stop the turtle once goal is reached"
@@ -179,9 +179,9 @@ class DefinedGoalPublisher(Node):
         self.cmd_vel_publisher.publish(self.velocity_message)
 
         #Pulbish turtle data
-        self.get_logger().info(f"Current State: {self.state}")
-        self.get_logger().info(f"Publishing velocity: linear.x={self.velocity_message.linear.x}, angular.z={self.velocity_message.angular.z}")
-        self.get_logger().info(f"Current Position: X:{self.current_position.x},Y:{self.current_position.y}")
+        # self.get_logger().info(f"Current State: {self.state}")
+        # self.get_logger().info(f"Publishing velocity: linear.x={self.velocity_message.linear.x}, angular.z={self.velocity_message.angular.z}")
+        # self.get_logger().info(f"Current Position: X:{self.current_position.x},Y:{self.current_position.y}")
 
 
 def main(args=None):
