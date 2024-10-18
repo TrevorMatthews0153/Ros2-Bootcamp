@@ -21,7 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
         'definedgoal_pub = week4_deliverables.week4_square_publisher:main',
-        'spiral_pub = week4_deliverables.week4_spiral_publisher:main'
+        'spiral_pub = week4_deliverables.week4_spiral_publisher:main',
+        'zigzag_pub = week4_deliverables.week4_zigzag_publisher:main'
         ],
     },
 )
